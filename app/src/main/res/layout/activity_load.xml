@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".LoadActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableTop="@drawable/ic_launcher_foreground"
+        android:text="@string/kio_studio"
+        android:textAlignment="center"
+        android:textColor="@color/load_text" />
+
+    <ProgressBar
+        android:id="@+id/load_progress"
+        style="?android:progressBarStyleHorizontal"
+        android:layout_width="80dp"
+        android:layout_height="4dp"
+        android:progress="100"
+        android:progressDrawable="@drawable/load_progress" />
+
+</LinearLayout>

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">KPlane</string>
+
+    <string name="title_activity_load">LoadActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="kio_studio">Kio Studio</string>
+</resources>
