@@ -11,10 +11,15 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableTop="@drawable/ic_launcher_foreground"
+        android:drawableTop="@drawable/ic_logo"
         android:text="@string/kio_studio"
         android:textAlignment="center"
         android:textColor="@color/load_text" />
+
+    <TextView
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp" />
 
     <ProgressBar
         android:id="@+id/load_progress"

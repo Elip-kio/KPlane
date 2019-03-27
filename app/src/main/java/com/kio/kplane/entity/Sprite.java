@@ -13,15 +13,19 @@ public abstract class Sprite {
     private float x, y, width, height;
     private Bitmap asset;
 
+    public static Bitmap scaleBitmap(Bitmap origin, float width, float height) {
+        Matrix matrix = new Matrix();
+        matrix.postScale(width / (origin.getWidth()), height / (origin.getHeight()));// 使用后乘
+        return Bitmap.createBitmap(origin, 0, 0, origin.getWidth(), origin.getHeight(), matrix, false);
+
+    }
 
     public Sprite(float x, float y, float width, float height, Bitmap asset) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        Matrix matrix = new Matrix();
-        matrix.postScale(width / (asset.getWidth()), height / (asset.getHeight()));// 使用后乘
-        this.asset = Bitmap.createBitmap(asset, 0, 0, asset.getWidth(), asset.getHeight(), matrix, false);
+        this.asset = scaleBitmap(asset,width,height);
     }
 
     public Sprite(float x, float y, Bitmap asset) {
@@ -56,10 +60,7 @@ public abstract class Sprite {
 
     public synchronized final void setWidth(float width) {
         this.width = width;
-        Bitmap origin = this.asset;
-        Matrix matrix = new Matrix();
-        matrix.postScale(width / (origin.getWidth()), 1);// 使用后乘
-        this.asset = Bitmap.createBitmap(origin, 0, 0, origin.getWidth(), origin.getHeight(), matrix, false);
+        this.asset = scaleBitmap(this.asset,width,height);
     }
 
     public final float getHeight() {
@@ -68,10 +69,7 @@ public abstract class Sprite {
 
     public synchronized final void setHeight(float height) {
         this.height = height;
-        Bitmap origin = this.asset;
-        Matrix matrix = new Matrix();
-        matrix.postScale(1, height / (origin.getHeight()));// 使用后乘
-        this.asset = Bitmap.createBitmap(origin, 0, 0, origin.getWidth(), origin.getHeight(), matrix, false);
+        this.asset = scaleBitmap(this.asset,width,height);
     }
 
     public final Bitmap getAsset() {

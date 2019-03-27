@@ -5,4 +5,6 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="kio_studio">Kio Studio</string>
+    <string name="seeHistory">查看历史纪录</string>
+    <string name="scoreInt">%1$d</string>
 </resources>

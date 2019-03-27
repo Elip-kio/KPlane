@@ -1,11 +1,19 @@
 package com.kio.kplane;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.media.MediaPlayer;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.View;
+import android.widget.GridLayout;
+import android.widget.TextView;
 
 import com.kio.kplane.main.DataManager;
 import com.kio.kplane.main.Stage;
@@ -19,6 +27,26 @@ public class GameActivity extends AppCompatActivity {
 
     Stage stage;
 
+    GridLayout gridLayout;
+    TextView score1, score2, score3;
+
+
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            if (gridLayout.getVisibility() == View.GONE) {
+                SharedPreferences preferences = getPreferences(Activity.MODE_PRIVATE);
+                score1.setText(String.format(getResources().getString(R.string.scoreInt), preferences.getInt("first", 0)));
+                score2.setText(String.format(getResources().getString(R.string.scoreInt), preferences.getInt("second", 0)));
+                score3.setText(String.format(getResources().getString(R.string.scoreInt), preferences.getInt("third", 0)));
+                gridLayout.setVisibility(View.VISIBLE);
+            } else
+                gridLayout.setVisibility(View.GONE);
+        }
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,9 +55,14 @@ public class GameActivity extends AppCompatActivity {
 
         stage = findViewById(R.id.main_stage);
 
+        this.score1 = findViewById(R.id.first);
+        this.score2 = findViewById(R.id.second);
+        this.score3 = findViewById(R.id.third);
+
         AssetManager assetManager = this.getAssets();
         AssetFileDescriptor descriptor = null;
 
+        gridLayout = findViewById(R.id.record_board);
         try {
             descriptor = assetManager.openFd("sounds/background.mp3");
         } catch (IOException e) {
@@ -48,6 +81,13 @@ public class GameActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         player.start();
+                        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                player.seekTo(0);
+                                player.start();
+                            }
+                        });
                     }
                 }).start();
 
@@ -93,6 +133,13 @@ public class GameActivity extends AppCompatActivity {
             this.player.stop();
             this.player.release();
         }
+        System.out.println(stage);
         stage.isAlive = false;
     }
+
+    public void goRecord() {
+        handler.sendEmptyMessage(0x123);
+    }
+
 }
+

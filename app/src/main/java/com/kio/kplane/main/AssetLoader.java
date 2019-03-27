@@ -1,7 +1,6 @@
 package com.kio.kplane.main;
 
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -40,7 +39,7 @@ public class AssetLoader {
 
 
         //加载图片资源
-        String[] bitmapPaths = new String[10];
+        String[] bitmapPaths = new String[13];
         bitmapPaths[0] = "images/background.png";
         bitmapPaths[1] = "images/player.png";
         bitmapPaths[2] = "images/bullet_player.png";
@@ -54,6 +53,12 @@ public class AssetLoader {
         bitmapPaths[8] = "images/enemy.png";
 
         bitmapPaths[9] = "images/explosion.png";
+
+        bitmapPaths[10] = "images/bullet_enemy.png";
+
+        bitmapPaths[11] = "images/button.png";
+
+        bitmapPaths[12] = "images/ui_back.png";
 
         AssetManager assetManager = context.getAssets();
 

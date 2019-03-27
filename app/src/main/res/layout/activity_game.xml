@@ -1,12 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GameActivity" >
+    android:background="@color/ui_main"
+    tools:context=".GameActivity">
+
     <com.kio.kplane.main.Stage
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:id="@+id/main_stage"
-       />
-</LinearLayout>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <GridLayout
+        android:visibility="gone"
+        android:layout_gravity="bottom|center"
+        android:orientation="horizontal"
+        android:id="@+id/record_board"
+        android:layout_width="180dp"
+        android:rowCount="1"
+        android:columnCount="3"
+        android:layout_height="160dp">
+        <TextView
+            android:id="@+id/second"
+            android:textColor="@color/ui_main"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:layout_column="0"
+            android:gravity="center"
+            android:drawableBottom="@drawable/ic_record"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:textColor="@color/ui_main"
+            android:gravity="center"
+            android:id="@+id/first"
+            android:layout_column="1"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            android:drawableBottom="@drawable/ic_record"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/third"
+            android:textColor="@color/ui_main"
+            android:layout_column="2"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:drawableBottom="@drawable/ic_record"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content" />
+
+    </GridLayout>
+</FrameLayout>

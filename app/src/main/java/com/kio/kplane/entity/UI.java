@@ -12,21 +12,27 @@ public class UI extends Sprite {
 
     private Paint p;
 
-    private RectF board;
+    private RectF buttonRect;
+
+    private Bitmap button;
 
     public UI(Bitmap bitmap) {
-        super((float) DataManager.screenWidth / 2 - 100, (float) DataManager.screenHeight / 2 - 100, bitmap);
+        super((float) DataManager.screenWidth / 2 - 400, (float) DataManager.screenHeight / 2 - 300,800,600, bitmap);
         p = new Paint();
-        board = new RectF(this.getX(), this.getY(), 200 + this.getX(), 200 + this.getY());
+        button = Sprite.scaleBitmap(DataManager.getInstance().bitmaps[11],600,200);
+        buttonRect = new RectF(this.getX()+100, this.getY()+300, 700 + this.getX(), 500 + this.getY());
     }
 
     @Override
     public void update(long delta) {
         DataManager manager = DataManager.getInstance();
-        if (manager.gameState==DataManager.STATE_GAME_OVER){
-            if (manager.isTouching()){
-                if (board.contains(manager.getTouchX(),manager.getTouchY()))
+        if (manager.gameState == DataManager.STATE_GAME_OVER) {
+            if (manager.isTouching()) {
+                if (buttonRect.contains(manager.getTouchX(), manager.getTouchY())){
                     manager.restart();
+                    manager.setTouching(false);
+                }
+
             }
         }
     }
@@ -47,11 +53,13 @@ public class UI extends Sprite {
 
         switch (state) {
             case DataManager.STATE_GAME_OVER:
-                p.setColor(Color.RED);
-                p.setTextSize(100);
-                canvas.drawRect(board, p);
-                p.setColor(Color.WHITE);
-                canvas.drawText("重来", getX() + 100, getY() + 100, p);
+                canvas.drawBitmap(getAsset(),getX(),getY(),p);
+                canvas.drawBitmap(button,getX()+100,getY()+300,p);
+                p.setTextSize(100f);
+                p.setColor(0xffcc0000);
+                canvas.drawText("Game Over",getX() + 400,getY() + 220,p);
+                p.setColor(Color.LTGRAY);
+                canvas.drawText("重   来", getX() + 400, getY() + 430, p);
                 break;
             case DataManager.STATE_GAME_PAUSE:
                 p = new Paint();

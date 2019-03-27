@@ -50,11 +50,13 @@ public class PlayerBullet extends Sprite implements ObjectPool.Poolable {
 
     @Override
     public void onCollide(Sprite other) {
-        if (other instanceof Enemy){
+        if (other instanceof Enemy) {
             Enemy enemy = (Enemy) other;
             if (enemy.isAlive)
                 this.isAlive = false;
         }
+        if (other instanceof EnemyBullet)
+            this.isAlive = false;
 
     }
 

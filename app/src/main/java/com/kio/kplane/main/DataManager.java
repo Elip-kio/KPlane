@@ -1,23 +1,25 @@
 package com.kio.kplane.main;
 
-import android.content.res.AssetFileDescriptor;
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.media.MediaPlayer;
 import android.view.MotionEvent;
 
+import com.kio.kplane.GameActivity;
 import com.kio.kplane.entity.Background;
 import com.kio.kplane.entity.Cloud;
 import com.kio.kplane.entity.Enemy;
+import com.kio.kplane.entity.EnemyBullet;
 import com.kio.kplane.entity.Player;
 import com.kio.kplane.entity.PlayerBullet;
 import com.kio.kplane.entity.UI;
 import com.kio.kplane.utils.ObjectPool;
 
-import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
 
@@ -88,6 +90,11 @@ public class DataManager extends Thread implements AssetLoader.AssetGetter {
     public final ArrayList<Enemy> enemyList = new ArrayList<>();
     public ObjectPool<Enemy> enemyPool = new ObjectPool<>(ObjectPool.INFINITY, enemyList);
 
+    public final ArrayList<EnemyBullet> enemyBulletList = new ArrayList<>();
+    public ObjectPool<EnemyBullet> enemyBulletPool = new ObjectPool<>(ObjectPool.INFINITY, enemyBulletList);
+
+
+    private Context context;
 
     private DataManager() {
 
@@ -109,7 +116,7 @@ public class DataManager extends Thread implements AssetLoader.AssetGetter {
 
     private void init() {
         this.background = new Background(bitmaps[0]);
-        this.ui = new UI(null);
+        this.ui = new UI(bitmaps[12]);
         this.player = new Player(bitmaps[1]);
         loadOver = true;
 
@@ -168,6 +175,9 @@ public class DataManager extends Thread implements AssetLoader.AssetGetter {
             for (int i = 0; i < playerBulletList.size(); i++) {
                 playerBulletList.get(i).update(delta);
             }
+            for (int i = 0; i < enemyBulletList.size(); i++) {
+                enemyBulletList.get(i).update(delta);
+            }
 
             //生成白云
             if (delta > 0 && System.currentTimeMillis() % (100 + (int) (Math.random() * 100)) == 0) {
@@ -212,6 +222,14 @@ public class DataManager extends Thread implements AssetLoader.AssetGetter {
             enemyList.get(i).collideWith(player);
         }
 
+        //检测玩家与敌机的子弹,玩家的子弹与敌机的子弹
+        for (int i = 0; i < enemyBulletList.size(); i++) {
+            for (int j = 0; j < playerBulletList.size(); j++) {
+                playerBulletList.get(j).collideWith(enemyBulletList.get(i));
+            }
+            enemyBulletList.get(i).collideWith(player);
+        }
+
     }
 
     public void draw(Canvas canvas) {
@@ -229,6 +247,11 @@ public class DataManager extends Thread implements AssetLoader.AssetGetter {
         for (int i = 0; i < playerBulletList.size(); i++) {
             playerBulletList.get(i).draw(canvas);
         }
+
+        for (int i = 0; i < enemyBulletList.size(); i++) {
+            enemyBulletList.get(i).draw(canvas);
+        }
+
         this.player.draw(canvas);
         this.ui.draw(canvas);
     }
@@ -249,8 +272,10 @@ public class DataManager extends Thread implements AssetLoader.AssetGetter {
         this.touchX = (int) event.getX();
         this.touchY = (int) event.getY();
 
-        this.isTouching = event.getAction() != MotionEvent.ACTION_UP;
-
+        if (event.getAction() == MotionEvent.ACTION_DOWN)
+            this.isTouching = true;
+        else if (event.getAction() == MotionEvent.ACTION_UP)
+            this.isTouching = false;
     }
 
     public boolean isTouching() {
@@ -273,6 +298,17 @@ public class DataManager extends Thread implements AssetLoader.AssetGetter {
             playerBulletList.add(bullet);
         }
 
+    }
+
+    public void createNewEnemyBullet(float x, float y) {
+        EnemyBullet bullet = enemyBulletPool.getInstance();
+        if (bullet == null) {
+            bullet = new EnemyBullet(bitmaps[10], x, y);
+            enemyBulletList.add(bullet);
+        } else {
+            bullet.setX(x);
+            bullet.setY(y);
+        }
     }
 
     public void recyclePlayerBullet(PlayerBullet playerBullet) {
@@ -305,6 +341,51 @@ public class DataManager extends Thread implements AssetLoader.AssetGetter {
 
     public void restart() {
         score = 0;
+        player.setX(DataManager.screenWidth / 2f - 100);
+        player.setY(DataManager.screenHeight - 400);
+        player.isAlive = true;
         gameState = DataManager.STATE_RUNNING;
+        GameActivity activity = (GameActivity) context;
+        activity.goRecord();
+    }
+
+    public void recycleEnemyBullet(EnemyBullet enemyBullet) {
+        try {
+            this.enemyBulletPool.recycle(enemyBullet);
+        } catch (InvalidObjectException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setTouching(boolean b) {
+        this.isTouching = b;
+    }
+
+    public void start(Context context) {
+        this.context = context;
+        this.start();
+    }
+
+    public void saveScore() {
+        GameActivity activity = (GameActivity) context;
+        SharedPreferences preferences = activity.getPreferences(Activity.MODE_PRIVATE);
+        int first = preferences.getInt("first",0);
+        int second = preferences.getInt("second",0);
+        int third = preferences.getInt("third",0);
+
+        SharedPreferences.Editor editor = preferences.edit();
+
+        if (score>first){
+            editor.putInt("first",score);
+            editor.apply();
+        }else if (score>second){
+            editor.putInt("second",score);
+            editor.putInt("third",second);
+            editor.apply();
+        }else if(score>third){
+            editor.putInt("third",score);
+            editor.apply();
+        }
+        activity.goRecord();
     }
 }
